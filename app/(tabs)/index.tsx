@@ -1,98 +1,147 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Link } from "expo-router";
+import { useEffect, useState } from "react";
+import { FlatList, Pressable, RefreshControl, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import TaskListCard from "@/components/TaskListCard/TaskListCard";
+import { Box } from "@/components/ui/box";
+import { Spinner } from "@/components/ui/spinner";
+import { Text } from "@/components/ui/text";
+import { TaskList } from "@/types/TaskList";
+
+const MOCK_TASK_LISTS: TaskList[] = [
+  {
+    id: "1",
+    title: "Computer Science",
+    subtitle: "Algorithms and data structures",
+    percentage: 60,
+    tags: ["school", "important"],
+    idColor: "bg-blue-500",
+    idIcon: "code",
+  },
+  {
+    id: "2",
+    title: "History",
+    subtitle: "World War II notes",
+    percentage: 30,
+    tags: ["reading"],
+    idColor: "bg-green-500",
+    idIcon: "menu-book",
+  },
+  {
+    id: "3",
+    title: "Math",
+    subtitle: "Calculus exercises",
+    percentage: 90,
+    tags: ["practice", "exam"],
+    idColor: "bg-purple-500",
+    idIcon: "functions",
+  },
+];
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  //todo lo que venga desde DB se guarda en un UseState, asi como estados de loading, refreshing y error
+  const [lists, setLists] = useState<TaskList[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const fetchTaskLists = async (): Promise<TaskList[]> => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const shouldFail = Math.random() < 0.3;
+
+        if (shouldFail) {
+          reject(new Error("Failed to fetch lists"));
+        } else {
+          resolve(MOCK_TASK_LISTS);
+        }
+      }, 1000);
+    });
+  };
+
+  const loadLists = async (fromRefresh: boolean = false) => {
+    try {
+      setError(null);
+      if (fromRefresh) {
+        setLoading(true);
+      }
+      const data = await fetchTaskLists();
+      setLists(data);
+      if (fromRefresh) {
+        setLoading(false);
+      }
+    } catch (err) {
+      setError("Something went wrong");
+      setLists([]);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true);
+      await loadLists();
+      setLoading(false);
+    };
+
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); //siempre dejar los []
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadLists();
+    setRefreshing(false);
+  };
+
+  return (
+    <SafeAreaView className="flex-1">
+      <Box className="flex-1 p-4">
+        <Text className="text-2xl mb-4">Task Lists</Text>
+
+        {/* Loading */}
+        {loading && (
+          <Box className="mt-4">
+            <Spinner size="large" color="grey" />
+          </Box>
+        )}
+
+        {/* Error */}
+        {!loading && error && (
+          <>
+            <Text className="text-red-500 mb-2">{error}</Text>
+            <Pressable onPress={() => loadLists(true)}>
+              <Text className="text-blue-500 underline">Retry</Text>
+            </Pressable>
+          </>
+        )}
+
+        {/* Empty */}
+        {!loading && !error && lists.length === 0 && (
+          <Text>No tasks available</Text>
+        )}
+
+        {/* List */}
+        {!loading && !error && (
+          <FlatList //  Renderisa solo lo que se ve en pantalla, se recomienda usarlo cuando hay muchisima info (20+ items)
+            data={lists}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <TaskListCard item={item} />}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        )}
+      </Box>
+
+      {/* acceder a storybook desde el home, solo en modo desarrollo */}
+      {__DEV__ && (
+        <View className="absolute bottom-4 left-0 right-0 items-center">
+          <Link href="/storybook" className="text-blue-500 underline text-base">
+            Open Storybook
+          </Link>
+        </View>
+      )}
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
