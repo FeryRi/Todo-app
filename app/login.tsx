@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -12,6 +14,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { login } from "../services/auth/authServices";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -20,13 +23,11 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
 
-  // Validación del correo electrónico
-  const validateEmail = (email) => {
+  const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Validar campos antes de enviar
   const validateForm = () => {
     let valid = true;
     const newErrors = { email: "", password: "" };
@@ -51,15 +52,27 @@ export default function LoginScreen() {
     return valid;
   };
 
-  const handleLogin = () => {
-    if (validateForm()) {
-      setLoading(true);
-      // Simular petición a API (reemplazar con tu lógica)
-      setTimeout(() => {
-        setLoading(false);
-        Alert.alert("Éxito", "Inicio de sesión correcto");
-        // Aquí navegarías a la pantalla principal
-      }, 1500);
+  const handleLogin = async () => {
+    if (!validateForm()) return;
+
+    setLoading(true);
+    try {
+      const token = await login(email, password);
+      await AsyncStorage.setItem("userToken", token);
+      router.replace("/(tabs)");
+    } catch (error: any) {
+      console.error("Error en login:", error);
+      let mensaje = "Credenciales incorrectas";
+      if (error.code === "auth/user-not-found") {
+        mensaje = "Usuario no encontrado";
+      } else if (error.code === "auth/wrong-password") {
+        mensaje = "Contraseña incorrecta";
+      } else if (error.code === "auth/invalid-credential") {
+        mensaje = "Correo o contraseña inválidos";
+      }
+      Alert.alert("Error", mensaje);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,15 +84,12 @@ export default function LoginScreen() {
         style={styles.keyboardView}
       >
         <View style={styles.content}>
-          {/* Logo o título */}
           <View style={styles.header}>
             <Text style={styles.title}>Bienvenido</Text>
             <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
           </View>
 
-          {/* Formulario */}
           <View style={styles.form}>
-            {/* Campo email */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Correo electrónico</Text>
               <TextInput
@@ -100,7 +110,6 @@ export default function LoginScreen() {
               ) : null}
             </View>
 
-            {/* Campo contraseña */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Contraseña</Text>
               <View style={styles.passwordContainer}>
@@ -133,7 +142,6 @@ export default function LoginScreen() {
               ) : null}
             </View>
 
-            {/* Botón de login */}
             <TouchableOpacity
               style={[styles.button, loading && styles.buttonDisabled]}
               onPress={handleLogin}
@@ -144,11 +152,6 @@ export default function LoginScreen() {
               ) : (
                 <Text style={styles.buttonText}>Iniciar sesión</Text>
               )}
-            </TouchableOpacity>
-
-            {/* Enlace de recuperación (opcional) */}
-            <TouchableOpacity style={styles.forgotButton}>
-              <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -249,13 +252,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
-  },
-  forgotButton: {
-    marginTop: 24,
-    alignItems: "center",
-  },
-  forgotText: {
-    color: "#3498db",
-    fontSize: 14,
   },
 });
