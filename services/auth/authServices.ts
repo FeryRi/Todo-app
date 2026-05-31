@@ -1,8 +1,7 @@
-// services/authService.ts
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "./auth";
 
-// Tu función login existente...
+// Login
 export const login = async (email: string, password: string) => {
   const userCredential = await signInWithEmailAndPassword(
     auth,
@@ -13,7 +12,7 @@ export const login = async (email: string, password: string) => {
   return token;
 };
 
-// Nueva función logout
+// Logout
 export const logout = async () => {
   try {
     await signOut(auth);

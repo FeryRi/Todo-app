@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
@@ -19,52 +19,54 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    // Verificar si existe el token al iniciar la app
-    const checkAuth = async () => {
-      const token = await AsyncStorage.getItem("userToken");
-      setIsAuthenticated(!!token);
-    };
-    checkAuth();
+    // Verifica el token UNA SOLA VEZ al iniciar.
+    AsyncStorage.getItem("userToken").then((token) => {
+      if (!token) {
+        router.replace("/login");
+      }
+      // Si hay token, el Stack ya muestra (tabs) como ruta anchor 
+      setAuthChecked(true);
+    });
   }, []);
-
-  // Mostrar pantalla de carga mientras se verifica la autenticación
-  if (isAuthenticated === null) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#3498db" />
-      </View>
-    );
-  }
 
   return (
     <GluestackUIProvider mode="light">
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
-          {!isAuthenticated ? (
-            // Usuario NO autenticado: solo puede ver el login
-            <Stack.Screen name="login" />
-          ) : (
-            // Usuario autenticado: puede ver todas las rutas protegidas
-            <>
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="lists" />
-              <Stack.Screen
-                name="modal"
-                options={{ presentation: "modal", title: "Modal" }}
-              />
-              {__DEV__ && (
-                <Stack.Screen
-                  name="storybook"
-                  options={{ headerShown: false }}
-                />
-              )}
-            </>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="login" />
+          <Stack.Screen name="register" />
+          <Stack.Screen name="lists/[id]" />
+          <Stack.Screen
+            name="modal"
+            options={{ presentation: "modal", title: "Modal" }}
+          />
+          {__DEV__ && (
+            <Stack.Screen name="storybook" options={{ headerShown: false }} />
           )}
         </Stack>
+
         <StatusBar style="auto" />
+
+        {!authChecked && (
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "#f5f7fa",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator size="large" color="#3498db" />
+          </View>
+        )}
       </ThemeProvider>
     </GluestackUIProvider>
   );

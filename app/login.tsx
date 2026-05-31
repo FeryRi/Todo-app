@@ -4,7 +4,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     KeyboardAvoidingView,
     Platform,
     SafeAreaView,
@@ -70,7 +69,7 @@ export default function LoginScreen() {
       } else if (error.code === "auth/invalid-credential") {
         mensaje = "Correo o contraseña inválidos";
       }
-      Alert.alert("Error", mensaje);
+      setErrors({ email: "", password: mensaje });
     } finally {
       setLoading(false);
     }
@@ -152,6 +151,12 @@ export default function LoginScreen() {
               ) : (
                 <Text style={styles.buttonText}>Iniciar sesión</Text>
               )}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.registerLink} onPress={() => router.push("/register")}>
+              <Text style={styles.registerLinkText}>
+                ¿No tienes cuenta? <Text style={styles.registerLinkBold}>Regístrate</Text>
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -252,5 +257,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
+  },
+  registerLink: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  registerLinkText: {
+    color: "#7f8c8d",
+    fontSize: 14,
+  },
+  registerLinkBold: {
+    color: "#3498db",
+    fontWeight: "700",
   },
 });
