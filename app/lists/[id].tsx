@@ -12,10 +12,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import AddTaskModal from "@/components/AddTaskModal/AddTaskModal";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal/DeleteConfirmModal";
 import EditListModal from "@/components/EditListModal/EditListModal";
-import EditTaskModal from "@/components/EditTaskModal/EditTaskModal";
+import TaskFormModal from "@/components/TaskFormModal/TaskFormModal";
 import TaskRow from "@/components/TaskRow/TaskRow";
 import { ACCENT_COLORS } from "@/components/TaskListCard/TaskListCard";
 import { deleteList, fetchListDetail } from "@/services/lists/listService";
@@ -236,7 +235,7 @@ export default function ListDetailScreen() {
       </Pressable>
 
       {/*Modales*/}
-      <AddTaskModal
+      <TaskFormModal
         visible={addModalOpen}
         listId={id}
         accentColor={accentHex}
@@ -244,7 +243,7 @@ export default function ListDetailScreen() {
         onClose={() => setAddModalOpen(false)}
       />
 
-      <EditTaskModal
+      <TaskFormModal
         visible={taskToEdit !== null}
         task={taskToEdit}
         accentColor={accentHex}

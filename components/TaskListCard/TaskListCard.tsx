@@ -4,9 +4,6 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { TaskList } from "@/types/TaskList";
 
-// ─── Mapas de datos del backend a valores de UI ───────────────────────────────
-
-// Colores hexadecimales por clave de accentColor del backend
 export const ACCENT_COLORS: Record<string, string> = {
   PRIMARY_BLUE: "#3B82F6",
   SLATE: "#4B5563",
@@ -27,7 +24,7 @@ export const ICON_MAP: Record<string, React.ComponentProps<typeof MaterialIcons>
   sigma: "functions",
 };
 
-// Colores de los pills de categoría (fondo + texto)
+// Colores de los pills de categoría 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string; label: string }> = {
   CORE_SCIENCE: { bg: "#DBEAFE", text: "#1D4ED8", label: "CORE SCIENCE" },
   HUMANITIES:   { bg: "#DCFCE7", text: "#15803D", label: "HUMANITIES" },
@@ -36,8 +33,7 @@ const CATEGORY_STYLES: Record<string, { bg: string; text: string; label: string 
   GENERAL:      { bg: "#F3F4F6", text: "#374151", label: "GENERAL" },
 };
 
-// ─── Helper: tiempo relativo para "Last session" ───────────────────────────────
-
+//Helper: tiempo relativo para "Last session" 
 function formatLastSession(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -48,8 +44,7 @@ function formatLastSession(iso: string | null | undefined): string | null {
   return `Last session ${diffD}d ago`;
 }
 
-// ─── Componente ───────────────────────────────────────────────────────────────
-
+//  Componente
 const TaskListCard: React.FC<{ item: TaskList }> = ({ item }) => {
   const accentHex = ACCENT_COLORS[item.idColor] ?? ACCENT_COLORS.PRIMARY_BLUE;
   const iconName = ICON_MAP[item.idIcon] ?? "menu-book";

@@ -128,8 +128,7 @@ todo-mobile/
 ├── components/             # Componentes reutilizables
 │   ├── TaskListCard/       # Tarjeta de lista con progreso
 │   ├── TaskRow/            # Fila de tarea con checkbox
-│   ├── AddTaskModal/       # Modal crear tarea
-│   ├── EditTaskModal/      # Modal editar tarea
+│   ├── TaskFormModal/      # Modal crear/editar tarea (discriminado por prop `task`)
 │   ├── EditListModal/      # Modal editar lista
 │   ├── CreateListModal/    # Modal crear lista
 │   ├── DeleteConfirmModal/ # Modal confirmación de eliminación
