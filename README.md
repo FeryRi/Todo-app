@@ -1,14 +1,9 @@
-# EduTask — Mobile App
+# Todo — Mobile App
 
-Aplicación móvil de gestión de tareas académicas construida con React Native y Expo. Permite a estudiantes organizar sus listas de tareas, dar seguimiento al progreso por materia y visualizar sus pendientes del día.
+Aplicación móvil de gestión de tareas (principalmente académicas) construida con React Native y Expo. Permite a estudiantes organizar sus listas de tareas, dar seguimiento al progreso por materia y visualizar sus pendientes del día.
+Permite:
 
----
-
-## Descripción del proyecto
-
-EduTask es una herramienta de productividad educativa que permite:
-
-- Crear y gestionar **listas de tareas** por materia con color e ícono personalizados
+- Crear y gestionar **listas de tareas** por materia o módulo con color e ícono personalizados
 - Agregar, editar y eliminar **tareas** con prioridad, descripción y fecha de entrega
 - Ver el **progreso** de cada lista con barra de avance
 - Consultar las tareas con **vencimiento hoy** directamente en el home
@@ -19,18 +14,19 @@ EduTask es una herramienta de productividad educativa que permite:
 
 ## Tecnologías utilizadas
 
-| Categoría | Tecnología |
-|---|---|
-| Framework | React Native + Expo SDK 54 |
-| Routing | Expo Router (file-based) |
-| Lenguaje | TypeScript |
-| HTTP Client | Axios (instancia personalizada + interceptors) |
-| Autenticación | Firebase Authentication |
-| Persistencia local | AsyncStorage |
-| Estilos | React Native StyleSheet + NativeWind (Tailwind) |
-| UI Components | Gluestack UI |
-| Íconos | `@expo/vector-icons` (MaterialIcons) |
-| Backend | Quarkus (Java) — deployado en Render |
+| Categoría          | Tecnología                           |
+| ------------------ | ------------------------------------ |
+| Framework          | React Native + Expo SDK 54           |
+| Routing            | Expo Router                          |
+| Lenguaje           | TypeScript                           |
+| HTTP Client        | Axios                                |
+| Autenticación      | Firebase Authentication              |
+| Persistencia local | AsyncStorage                         |
+| Estilos            | React Native StyleSheet + Tailwind   |
+| UI Components      | Gluestack UI                         |
+| Íconos             | `@expo/vector-icons` (MaterialIcons) |
+| Backend            | Quarkus (Java) — deployado en Render |
+| Database           | PostgreSQL — deployado Supabase      |
 
 ---
 
@@ -45,9 +41,9 @@ EduTask es una herramienta de productividad educativa que permite:
 
 ### Pasos
 
-```bash
+````bash
 # 1. Clona el repositorio
-git clone <URL_DEL_REPOSITORIO>
+git clone <https://github.com/FeryRi/Todo-app.git>
 
 # 2. Entra a la carpeta del proyecto móvil
 cd todofront-mobile/todo-mobile
@@ -55,34 +51,11 @@ cd todofront-mobile/todo-mobile
 # 3. Instala las dependencias
 npm install
 
-# 4. Crea el archivo de variables de entorno
-cp .env.example .env
-# Edita .env con tus credenciales (ver sección siguiente)
-```
-
----
-
-## Variables de entorno
-
-Crea un archivo `.env` en la raíz del proyecto móvil (`todofront-mobile/todo-mobile/.env`) con las siguientes variables:
-
-```env
-# Firebase — configuración del proyecto
-EXPO_PUBLIC_API_KEY=your_firebase_api_key
-EXPO_PUBLIC_AUTH_DOMAIN=your_project.firebaseapp.com
-EXPO_PUBLIC_PROJECT_ID=your_project_id
-EXPO_PUBLIC_STORAGE_BUCKET=your_project.firebasestorage.app
-EXPO_PUBLIC_MESSAGING_SENDER_ID=your_sender_id
-EXPO_PUBLIC_APP_ID=your_app_id
-EXPO_PUBLIC_MEASUREMENT_ID=your_measurement_id
+# 4. agrega el .env en la raíz del proyecto
 
 # URL del backend REST
 EXPO_PUBLIC_API_URL=https://todoback-xkpn.onrender.com
-```
 
-> **Nota:** Todas las variables deben llevar el prefijo `EXPO_PUBLIC_` para ser accesibles en tiempo de ejecución con Expo.
-
----
 
 ## Cómo ejecutar el proyecto
 
@@ -98,7 +71,7 @@ npm run ios
 
 # Abrir en navegador web
 npm run web
-```
+````
 
 Escanea el código QR con **Expo Go** (Android/iOS) para ver la app en tu dispositivo físico.
 
@@ -108,36 +81,35 @@ Escanea el código QR con **Expo Go** (Android/iOS) para ver la app en tu dispos
 
 ## Links deployados
 
-| Servicio | URL |
-|---|---|
+| Servicio                       | URL                                |
+| ------------------------------ | ---------------------------------- |
 | Backend API (Quarkus / Render) | https://todoback-xkpn.onrender.com |
-| Repositorio | `<URL_DEL_REPOSITORIO>` |
 
 ### Endpoints principales del backend
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| `GET` | `/dashboard` | Home — listas con progreso + tareas de hoy |
-| `GET` | `/lists` | Todas las listas del usuario |
-| `POST` | `/lists` | Crear lista |
-| `GET` | `/lists/{id}` | Detalle de lista con tareas |
-| `PUT` | `/lists/{id}` | Editar lista |
-| `DELETE` | `/lists/{id}` | Eliminar lista |
-| `POST` | `/tasks` | Crear tarea |
-| `PUT` | `/tasks/{id}` | Editar tarea |
-| `PATCH` | `/tasks/{id}/status` | Cambiar estado de tarea |
-| `DELETE` | `/tasks/{id}` | Eliminar tarea |
-| `GET` | `/search?q=` | Buscar listas y tareas |
+| Método   | Ruta                 | Descripción                                |
+| -------- | -------------------- | ------------------------------------------ |
+| `GET`    | `/dashboard`         | Home — listas con progreso + tareas de hoy |
+| `GET`    | `/lists`             | Todas las listas del usuario               |
+| `POST`   | `/lists`             | Crear lista                                |
+| `GET`    | `/lists/{id}`        | Detalle de lista con tareas                |
+| `PUT`    | `/lists/{id}`        | Editar lista                               |
+| `DELETE` | `/lists/{id}`        | Eliminar lista                             |
+| `POST`   | `/tasks`             | Crear tarea                                |
+| `PUT`    | `/tasks/{id}`        | Editar tarea                               |
+| `PATCH`  | `/tasks/{id}/status` | Cambiar estado de tarea                    |
+| `DELETE` | `/tasks/{id}`        | Eliminar tarea                             |
+| `GET`    | `/search?q=`         | Buscar listas y tareas                     |
 
 ---
 
 ## Usuarios de prueba
 
-| Rol | Correo | Contraseña |
-|---|---|---|
-| Usuario de prueba | `test@edutask.com` | `Test1234` |
+| Rol               | Correo          | Contraseña |
+| ----------------- | --------------- | ---------- |
+| Usuario de prueba | `1@hotmail.com` | `aA123456` |
 
-> Si los usuarios anteriores no existen, puedes crear una cuenta nueva desde la pantalla de **Registro** dentro de la app.
+> Si el usuario anteriores no existen, puedes crear una cuenta nueva desde la pantalla de **Registro** dentro de la app.
 
 ---
 
