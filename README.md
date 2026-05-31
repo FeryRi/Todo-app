@@ -51,10 +51,20 @@ cd todofront-mobile/todo-mobile
 # 3. Instala las dependencias
 npm install
 
-# 4. agrega el .env en la raíz del proyecto
+# 4. Agrega el .env en la raíz del proyecto con las siguientes variables
+#    (los valores reales se encuentran en la entrega de Canvas)
 
 # URL del backend REST
 EXPO_PUBLIC_API_URL=https://todoback-xkpn.onrender.com
+
+# Firebase Authentication
+EXPO_PUBLIC_API_KEY=your_firebase_api_key
+EXPO_PUBLIC_AUTH_DOMAIN=your_project.firebaseapp.com
+EXPO_PUBLIC_PROJECT_ID=your_project_id
+EXPO_PUBLIC_STORAGE_BUCKET=your_project.firebasestorage.app
+EXPO_PUBLIC_MESSAGING_SENDER_ID=your_sender_id
+EXPO_PUBLIC_APP_ID=your_app_id
+EXPO_PUBLIC_MEASUREMENT_ID=your_measurement_id
 
 
 ## Cómo ejecutar el proyecto
